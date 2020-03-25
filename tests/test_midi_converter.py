@@ -11,7 +11,9 @@ class TestDiscreteTimeMidiConverter(TestCase):
         self.mc = DiscreteTimeMidiConverter()
 
     def test_convert_file(self):
-        """ check if a simple midi file can be converted to a sequence """
+        """
+        Check if a simple midi file can be converted to a sequence.
+        """
         test_midi_file = 'test_midi/test_midi_002.mid'
         sequence = self.mc.convert_file(test_midi_file)
         # midi file is the same as the one that should be created in test_sequence_to_midi
@@ -24,7 +26,9 @@ class TestDiscreteTimeMidiConverter(TestCase):
         self.assertListEqual(expected_sequence, sequence)
 
     def test_convert_to_file(self):
-        """ check if a simple sequence can be correctly converted to MIDI """
+        """
+        Check if a simple sequence can be correctly converted to MIDI.
+        """
         test_sequence = []
         for i in range(128):
             # append increasing wait, note on, wait note off
@@ -52,7 +56,9 @@ class TestDiscreteTimeMidiConverter(TestCase):
             i += 1
 
     def test_bach_chorale_conversion(self):
-        """ check if all bach chorale MIDI files can be successfully converted to sequences and back to MIDI """
+        """
+        Check if all bach chorale MIDI files can be successfully converted to sequences and back to MIDI.
+        """
         paths = Path('./test_midi/bach_chorales_midi').glob('*.mid')
         for path in paths:
             sequence = self.mc.convert_file(path)
