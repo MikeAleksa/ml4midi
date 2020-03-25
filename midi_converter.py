@@ -30,9 +30,6 @@ class MidiConverter(ABC):
     def convert_folder(self, path) -> list:
         """
         Convert a folder of MIDI files into a list of event sequences.
-
-        The default implementation calls convert_file on each .mid file found at the given path.
-
         :param path: the path to the folder of MIDI files
         :return: a list of event sequences
         """
@@ -75,8 +72,8 @@ class DiscreteTimeMidiConverter(MidiConverter):
 
     def convert_file(self, path) -> list:
         """
-        convert a single MIDI file into an event sequence
-        :param path: path to file to convert
+        Convert a single file from MIDI to an event sequence, quantized into discrete time steps.
+        :param path: the path to the MIDI file
         :return: an event sequence
         """
         if not isinstance(path, Path):
@@ -120,14 +117,19 @@ class DiscreteTimeMidiConverter(MidiConverter):
         return seq
 
     def convert_folder(self, path) -> list:
+        """
+        Convert a folder of MIDI files into a list of event sequences.
+        :param path: the path to the folder of MIDI files
+        :return: a list of event sequences
+        """
         return super().convert_folder(path)
 
     def convert_to_file(self, seq, path, filename):
         """
-        convert an event sequence into a midi file
-        :param seq: event sequence to convert to midi
-        :param path: path to output midi file
-        :param filename: filename for midi file
+        Convert an event sequence into a MIDI file.
+        :param seq: an event sequence
+        :param path: the output path for the MIDI file
+        :param filename: the output filename for the MIDI file
         :return:
         """
         tempo = mido.bpm2tempo(self.BPM)
