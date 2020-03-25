@@ -23,7 +23,7 @@ class TestDiscreteTimeMidiConverter(TestCase):
             expected_sequence.append(i + 128)
         self.assertListEqual(expected_sequence, sequence)
 
-    def test_sequence_to_midi_file(self):
+    def test_convert_to_file(self):
         """ check if a simple sequence can be correctly converted to MIDI """
         test_sequence = []
         for i in range(128):
