@@ -12,7 +12,7 @@ class TestMidiConverter(TestCase):
 
     def test_sequence_from_midi_file(self):
         """ check if a simple midi file can be converted to a sequence """
-        test_midi_file = './test_midi/test_midi_002.mid'
+        test_midi_file = 'test_midi/test_midi_002.mid'
         sequence = self.mc.sequence_from_midi_file(test_midi_file)
         # midi file is the same as the one that should be created in test_sequence_to_midi
         expected_sequence = []
@@ -37,7 +37,7 @@ class TestMidiConverter(TestCase):
         self.mc.sequence_to_midi_file(test_sequence, './test_midi/', 'test_midi_001.mid')
 
         # load resulting sequence in mido
-        midi = mido.MidiFile('./test_midi/test_midi_001.mid')
+        midi = mido.MidiFile('test_midi/test_midi_001.mid')
 
         # check sequence
         i = 0
