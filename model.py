@@ -65,6 +65,7 @@ class MusicModel:
             data: tf.data.Dataset,
             val_data: tf.data.Dataset = None,
             epochs: int = 1,
+            batch_size: int = None,
             verbose: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
@@ -79,6 +80,7 @@ class MusicModel:
             history = self.model.fit(x,
                                      y,
                                      epochs=epochs,
+                                     batch_size=batch_size,
                                      validation_data=val_data,
                                      verbose=verbose,
                                      callbacks=self.callbacks)
