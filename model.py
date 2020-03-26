@@ -10,6 +10,10 @@ class MusicModel:
     LSTM-based model for music generation.
     """
 
+    @property
+    def summary(self):
+        return self.model.summary()
+
     def __init__(self,
                  vocab_size: int,
                  embed_dims: int,
@@ -40,11 +44,12 @@ class MusicModel:
         # TODO: learning rate scheduling
         self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    def __build_model(self):
+    def __build_model(self) -> keras.Sequential:
         """
         Build and compile model.
+        :return: a keras sequential model
         """
-        model = keras.models.Sequential()
+        model = keras.Sequential()
         model.add(keras.layers.Embedding(self.vocab_size, self.embed_dims, batch_input_shape=[None, None]))
         for _ in range(self.layers - 1):
             model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
@@ -56,15 +61,15 @@ class MusicModel:
         model.add(keras.layers.Dense(units=self.vocab_size, activation='softmax'))
         return model
 
-    def fit(self, data, val_data, epochs: int, batch_size: int, verbose: int = 0):
+    def fit(self, data, val_data, epochs: int, batch_size: int, verbose: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
-        :param data: dataset of event sequences
-        :param val_data: validation data
-        :param epochs: number of epochs to train
-        :param batch_size: batch size
+        :param data: a dataset of event sequences
+        :param val_data: a dataset of validation data
+        :param epochs: the number of epochs to train
+        :param batch_size: the batch size to use during training
         :param verbose: verbosity
-        :return:
+        :return: an object containing data about
         """
         history = self.model.fit(data,
                                  epochs=epochs,
@@ -74,9 +79,17 @@ class MusicModel:
                                  callbacks=self.callbacks)
         return history
 
-    def load_checkpoint(self):
-        # TODO: implement load_checkpoint
-        pass
+    def load_checkpoint(self, path):
+        """
+        Load weights from a checkpoint.
+        :param path: the path to a checkpoint file
+        """
+        if not isinstance(path, Path):
+            path = Path(path)
+        try:
+            self.model.load_weights(path)
+        except Exception as e:
+            print(e)
 
     def finetune(self):
         # TODO: implement finetune
