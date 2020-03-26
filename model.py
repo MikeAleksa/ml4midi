@@ -12,7 +12,7 @@ class MusicModel:
 
     @property
     def summary(self):
-        return self.model.summary()
+        return self.model.summary
 
     def __init__(self,
                  n_classes: int,
