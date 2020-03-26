@@ -41,8 +41,12 @@ class MusicModel:
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=str(self.log_dir))
         self.callbacks = [ckpt_callback, tensorboard_callback]
         self.model = self.__build_model()
+
         # TODO: learning rate scheduling
-        self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        def loss(labels, logits):
+            return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+
+        self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
     def __build_model(self) -> keras.Sequential:
         """
@@ -58,12 +62,12 @@ class MusicModel:
         model.add(keras.layers.LSTM(self.rnn_size))
         model.add(keras.layers.Dropout(self.dropout_rate))
         model.add(keras.layers.BatchNormalization())
-        model.add(keras.layers.Dense(units=self.n_classes, activation='softmax'))
+        model.add(keras.layers.Dense(units=self.n_classes))
         return model
 
     def fit(self,
-            data: tf.data.Dataset,
-            val_data: tf.data.Dataset = None,
+            data,
+            val_data=None,
             epochs: int = 1,
             batch_size: int = None,
             verbose: int = 0) -> keras.callbacks.History:
@@ -72,6 +76,7 @@ class MusicModel:
         :param data: a dataset of event sequences
         :param val_data: a dataset of validation data
         :param epochs: the number of epochs to train
+        :param batch_size: the size of batch to train on (not used with tf.data.Dataset)
         :param verbose: verbosity
         :return: an object containing data about
         """
