@@ -48,7 +48,6 @@ class MidiConverter(ABC):
         :param seq: an event sequence
         :param path: the output path for the MIDI file
         :param filename: the output filename for the MIDI file
-        :return:
         """
         pass
 
@@ -63,7 +62,7 @@ class DiscreteTimeMidiConverter(MidiConverter):
         Set up variables to use for quantization and conversion of events between BPM and discrete time steps
         :param samples: the number of discrete samples per second, used to quantize event - defaults to 2ms steps
         :param bpm: the bpm for any output midi files
-        :param classes: the number of classes
+        :param n_classes: the number of classes
         """
         super().__init__(n_classes=n_classes)
         self.samples = samples
@@ -130,7 +129,6 @@ class DiscreteTimeMidiConverter(MidiConverter):
         :param seq: an event sequence
         :param path: the output path for the MIDI file
         :param filename: the output filename for the MIDI file
-        :return:
         """
         tempo = mido.bpm2tempo(self.BPM)
         midi = mido.MidiFile(ticks_per_beat=self.TPB)
@@ -153,5 +151,4 @@ class DiscreteTimeMidiConverter(MidiConverter):
             else:
                 track.append(mido.Message('note_off', note=event - 128, time=time_delta))
                 time_delta = 0
-
         midi.save(path / filename)
