@@ -115,11 +115,12 @@ class MusicModel:
         """
         Generate an event sequence using a given event sequence as a seed.
         :param length: the number of events to generate
-        :param seed_sequence: an event sequence to seed the prediction with
+        :param seed_sequence: an event sequence to seed the prediction with - not included in final output
         :param history: the amount of events to consider for each prediction
         :return: an event sequence
         """
-        generated_sequence = seed_sequence
+        generated_sequence = list()
+        generated_sequence += seed_sequence
         for _ in range(length):
             next_sample = self.model.predict([generated_sequence[-history:]])
             generated_sequence.append(next_sample)
