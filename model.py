@@ -74,11 +74,20 @@ class MusicModel:
         :param verbose: verbosity
         :return: an object containing data about
         """
-        history = self.model.fit(data,
-                                 epochs=epochs,
-                                 validation_data=val_data,
-                                 verbose=verbose,
-                                 callbacks=self.callbacks)
+        if not isinstance(data, tf.data.Dataset):
+            x, y = data
+            history = self.model.fit(x,
+                                     y,
+                                     epochs=epochs,
+                                     validation_data=val_data,
+                                     verbose=verbose,
+                                     callbacks=self.callbacks)
+        else:
+            history = self.model.fit(data,
+                                     epochs=epochs,
+                                     validation_data=val_data,
+                                     verbose=verbose,
+                                     callbacks=self.callbacks)
         return history
 
     def load_checkpoint(self, path: str, use_latest: bool = False):
