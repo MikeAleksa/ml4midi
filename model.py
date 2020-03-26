@@ -36,7 +36,7 @@ class MusicModel:
         self.layers = layers
         self.dropout_rate = dropout_rate
         self.ckpt_path = Path(ckpt_dir) / 'ckpt_{epoch}'
-        self.log_dir = Path('/logs') / Path(strftime("%Y-%m-%d-%H%M", localtime()))
+        self.log_dir = Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime()))
         ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=self.log_dir)
         self.callbacks = [ckpt_callback, tensorboard_callback]
@@ -63,22 +63,19 @@ class MusicModel:
 
     def fit(self,
             data: tf.data.Dataset,
-            val_data: tf.data.Dataset,
-            epochs: int,
-            batch_size: int,
+            val_data: tf.data.Dataset = None,
+            epochs: int = 1,
             verbose: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
         :param data: a dataset of event sequences
         :param val_data: a dataset of validation data
         :param epochs: the number of epochs to train
-        :param batch_size: the batch size to use during training
         :param verbose: verbosity
         :return: an object containing data about
         """
         history = self.model.fit(data,
                                  epochs=epochs,
-                                 batch_size=batch_size,
                                  validation_data=val_data,
                                  verbose=verbose,
                                  callbacks=self.callbacks)
