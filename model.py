@@ -61,7 +61,12 @@ class MusicModel:
         model.add(keras.layers.Dense(units=self.n_classes, activation='softmax'))
         return model
 
-    def fit(self, data, val_data, epochs: int, batch_size: int, verbose: int = 0) -> keras.callbacks.History:
+    def fit(self,
+            data: tf.data.Dataset,
+            val_data: tf.data.Dataset,
+            epochs: int,
+            batch_size: int,
+            verbose: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
         :param data: a dataset of event sequences
@@ -79,15 +84,18 @@ class MusicModel:
                                  callbacks=self.callbacks)
         return history
 
-    def load_checkpoint(self, path):
+    def load_checkpoint(self, path: str, use_latest: bool = False):
         """
         Load weights from a checkpoint.
         :param path: the path to a checkpoint file
+        :param use_latest: if true, path should be a directory of checkpoints, otherwise path should indicate a checkpoint
         """
-        if not isinstance(path, Path):
-            path = Path(path)
+        if use_latest:
+            ckpt = tf.train.latest_checkpoint(path)
+        else:
+            ckpt = path
         try:
-            self.model.load_weights(path)
+            self.model.load_weights(ckpt)
         except Exception as e:
             print(e)
 
