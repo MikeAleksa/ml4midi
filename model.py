@@ -100,6 +100,16 @@ class MusicModel:
         # TODO: implement finetune
         pass
 
-    def generate_sequence(self):
-        # TODO: implement generate_sequence
-        pass
+    def generate_sequence(self, length: int, seed_sequence: list, history: int = 128):
+        """
+        Generate an event sequence using a given event sequence as a seed.
+        :param length: the number of events to generate
+        :param seed_sequence: an event sequence to seed the prediction with
+        :param history: the amount of events to consider for each prediction
+        :return: an event sequence
+        """
+        generated_sequence = seed_sequence
+        for _ in range(length):
+            next_sample = self.model.predict([generated_sequence[:-history]])
+            generated_sequence.append(next_sample)
+        return generated_sequence[len(seed_sequence):]
