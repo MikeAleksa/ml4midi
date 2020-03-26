@@ -37,8 +37,8 @@ class MusicModel:
         self.dropout_rate = dropout_rate
         self.ckpt_path = Path(ckpt_dir) / 'ckpt_{epoch}'
         self.log_dir = Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime()))
-        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=self.log_dir)
+        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=str(self.ckpt_path), save_weights_only=True)
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=str(self.log_dir))
         self.callbacks = [ckpt_callback, tensorboard_callback]
         self.model = self.__build_model()
         # TODO: learning rate scheduling
