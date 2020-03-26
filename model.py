@@ -44,7 +44,7 @@ class MusicModel:
 
         # TODO: learning rate scheduling
         def loss(labels, logits):
-            self.loss = tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+            return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
         self.model.compile(loss=loss, optimizer='adam', metrics=['accuracy'])
 
