@@ -121,6 +121,6 @@ class MusicModel:
         """
         generated_sequence = seed_sequence
         for _ in range(length):
-            next_sample = self.model.predict([generated_sequence[:-history]])
+            next_sample = self.model.predict([generated_sequence[-history:]])
             generated_sequence.append(next_sample)
         return generated_sequence[len(seed_sequence):]
