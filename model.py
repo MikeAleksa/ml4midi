@@ -15,7 +15,7 @@ class MusicModel:
         return self.model.summary()
 
     def __init__(self,
-                 vocab_size: int,
+                 n_classes: int,
                  embed_dims: int,
                  rnn_size: int,
                  layers: int,
@@ -23,14 +23,14 @@ class MusicModel:
                  ckpt_dir: str = './training_checkpoints'):
         """
         Initialize parameters, build and compile model.
-        :param vocab_size: the number of classes for the model to learn/predict
+        :param n_classes: the number of classes for the model to learn/predict
         :param embed_dims: embedding layer dimensions
         :param rnn_size: lstm layer dimensions
         :param layers: number of (lstm, dropout, batch_normalization) layers
         :param dropout_rate: lstm-layer dropout rate
         :param ckpt_dir: directory to save checkpoints
         """
-        self.vocab_size = vocab_size
+        self.n_classes = n_classes
         self.embed_dims = embed_dims
         self.rnn_size = rnn_size
         self.layers = layers
@@ -50,7 +50,7 @@ class MusicModel:
         :return: a keras sequential model
         """
         model = keras.Sequential()
-        model.add(keras.layers.Embedding(self.vocab_size, self.embed_dims, batch_input_shape=[None, None]))
+        model.add(keras.layers.Embedding(self.n_classes, self.embed_dims, batch_input_shape=[None, None]))
         for _ in range(self.layers - 1):
             model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
             model.add(keras.layers.Dropout(self.dropout_rate))
@@ -58,7 +58,7 @@ class MusicModel:
         model.add(keras.layers.LSTM(self.rnn_size))
         model.add(keras.layers.Dropout(self.dropout_rate))
         model.add(keras.layers.BatchNormalization())
-        model.add(keras.layers.Dense(units=self.vocab_size, activation='softmax'))
+        model.add(keras.layers.Dense(units=self.n_classes, activation='softmax'))
         return model
 
     def fit(self, data, val_data, epochs: int, batch_size: int, verbose: int = 0) -> keras.callbacks.History:
