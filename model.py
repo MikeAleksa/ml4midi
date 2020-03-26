@@ -1,6 +1,7 @@
 from pathlib import Path
 from time import localtime, strftime
 
+import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 
@@ -127,7 +128,8 @@ class MusicModel:
         generated_sequence = list()
         generated_sequence += seed_sequence
         for _ in range(length):
-            next_sample_logits = self.model.predict([generated_sequence[-history:]])
-            next_sample = int(tf.random.categorical(next_sample_logits, 1))
-            generated_sequence.append(next_sample)
+            sequence_history = np.array([generated_sequence[-history:]])
+            next_sample_logits = self.model.predict(sequence_history)
+            next_sample = tf.random.categorical(next_sample_logits, 1)
+            generated_sequence.append(int(next_sample))
         return generated_sequence[len(seed_sequence):]
