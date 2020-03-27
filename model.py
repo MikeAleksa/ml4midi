@@ -11,30 +11,32 @@ class MusicModel:
     LSTM-based model for music generation.
     """
 
-    @property
-    def summary(self):
-        return self.model.summary
-
     def __init__(self,
                  n_classes: int,
                  embed_dims: int,
                  rnn_size: int,
-                 layers: int,
+                 rnn_layers: int,
+                 dense_size: int,
+                 dense_layers: int,
                  dropout_rate: float,
                  ckpt_dir: str = './training_checkpoints'):
         """
         Initialize parameters, build and compile model.
         :param n_classes: the number of classes for the model to learn/predict
         :param embed_dims: embedding layer dimensions
-        :param rnn_size: lstm layer dimensions
-        :param layers: number of (lstm, dropout, batch_normalization) layers
+        :param rnn_size: lstm layer units
+        :param rnn_layers: number of (lstm, dropout, batch_normalization) layers
+        :param dense_size: dense layer units
+        :param dense_layers: number of dense layers
         :param dropout_rate: lstm-layer dropout rate
         :param ckpt_dir: directory to save checkpoints
         """
         self.n_classes = n_classes
         self.embed_dims = embed_dims
         self.rnn_size = rnn_size
-        self.layers = layers
+        self.rnn_layers = rnn_layers
+        self.dense_size = dense_size
+        self.dense_layers = dense_layers
         self.dropout_rate = dropout_rate
         self.ckpt_path = Path(ckpt_dir) / 'ckpt_{epoch}'
         self.log_dir = Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime()))
@@ -49,6 +51,10 @@ class MusicModel:
 
         self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
+    @property
+    def summary(self):
+        return self.model.summary
+
     def __build_model(self) -> keras.Sequential:
         """
         Build and compile model.
@@ -56,13 +62,15 @@ class MusicModel:
         """
         model = keras.Sequential()
         model.add(keras.layers.Embedding(self.n_classes, self.embed_dims, batch_input_shape=[None, None]))
-        for _ in range(self.layers - 1):
+        for _ in range(self.rnn_layers - 1):
             model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
             model.add(keras.layers.Dropout(self.dropout_rate))
             model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.LSTM(self.rnn_size))
         model.add(keras.layers.Dropout(self.dropout_rate))
         model.add(keras.layers.BatchNormalization())
+        for _ in range(self.dense_layers - 1):
+            model.add(keras.layers.Dense(units=self.dense_size))
         model.add(keras.layers.Dense(units=self.n_classes))
         return model
 
@@ -125,6 +133,7 @@ class MusicModel:
         :param history: the amount of events to consider for each prediction
         :return: an event sequence
         """
+        # TODO: use temperature control
         generated_sequence = list()
         generated_sequence += seed_sequence
         for _ in range(length):
