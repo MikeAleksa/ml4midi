@@ -83,7 +83,7 @@ class MusicModel:
             verbose: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
-        :param data: a dataset of event sequences
+        :param data: a dataset of event sequences - can be a tf.data.Dataset or tuple of (examples, labels)
         :param val_data: a dataset of validation data
         :param epochs: the number of epochs to train
         :param batch_size: the size of batch to train on (not used with tf.data.Dataset)
