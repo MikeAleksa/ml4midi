@@ -44,6 +44,7 @@ class MusicModel:
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=str(self.log_dir))
         self.callbacks = [ckpt_callback, tensorboard_callback]
         self.model = self.__build_model()
+        self.history = None
 
         # TODO: learning rate scheduling
         def loss(labels, logits):
@@ -91,7 +92,7 @@ class MusicModel:
         """
         if not isinstance(data, tf.data.Dataset):
             x, y = data
-            history = self.model.fit(x,
+            self.history = self.model.fit(x,
                                      y,
                                      epochs=epochs,
                                      batch_size=batch_size,
@@ -99,12 +100,12 @@ class MusicModel:
                                      verbose=verbose,
                                      callbacks=self.callbacks)
         else:
-            history = self.model.fit(data,
+            self.history = self.model.fit(data,
                                      epochs=epochs,
                                      validation_data=val_data,
                                      verbose=verbose,
                                      callbacks=self.callbacks)
-        return history
+        return self.history
 
     def load_checkpoint(self, path: str, use_latest: bool = False):
         """
