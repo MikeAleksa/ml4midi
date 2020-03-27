@@ -11,6 +11,10 @@ class MusicModel:
     LSTM-based model for music generation.
     """
 
+    @property
+    def summary(self):
+        return self.model.summary
+
     def __init__(self,
                  n_classes: int,
                  embed_dims: int,
@@ -38,11 +42,9 @@ class MusicModel:
         self.dense_size = dense_size
         self.dense_layers = dense_layers
         self.dropout_rate = dropout_rate
-        self.ckpt_path = Path(ckpt_dir) / 'ckpt_{epoch}'
-        self.log_dir = Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime()))
-        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=str(self.ckpt_path), save_weights_only=True)
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=str(self.log_dir))
-        self.callbacks = [ckpt_callback, tensorboard_callback]
+        self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
+        self.log_dir = str(Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime())))
+        self.callbacks = self.__define_callbacks()
         self.model = self.__build_model()
         self.history = None
 
@@ -52,9 +54,10 @@ class MusicModel:
 
         self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
-    @property
-    def summary(self):
-        return self.model.summary
+    def __define_callbacks(self) -> list:
+        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=self.log_dir)
+        return [ckpt_callback, tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
         """
