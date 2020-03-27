@@ -23,7 +23,8 @@ class MusicModel:
                  dense_size: int,
                  dense_layers: int,
                  dropout_rate: float,
-                 ckpt_dir: str = './training_checkpoints'):
+                 ckpt_dir: str = './training_checkpoints',
+                 log_dir: str = './logs'):
         """
         Initialize parameters, build and compile model.
         :param n_classes: the number of classes for the model to learn/predict
@@ -34,6 +35,7 @@ class MusicModel:
         :param dense_layers: number of dense layers
         :param dropout_rate: lstm-layer dropout rate
         :param ckpt_dir: directory to save checkpoints
+        :param log_dir: directory to save tensorboard logs
         """
         self.n_classes = n_classes
         self.embed_dims = embed_dims
@@ -43,7 +45,7 @@ class MusicModel:
         self.dense_layers = dense_layers
         self.dropout_rate = dropout_rate
         self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
-        self.log_dir = str(Path('./logs') / Path(strftime("%Y-%m-%d-%H%M", localtime())))
+        self.log_dir = str(Path(log_dir) / Path(strftime("%Y-%m-%d-%H%M", localtime())))
         self.callbacks = self.__define_callbacks()
         self.model = self.__build_model()
         self.history = None
