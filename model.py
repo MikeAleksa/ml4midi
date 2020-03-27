@@ -93,18 +93,18 @@ class MusicModel:
         if not isinstance(data, tf.data.Dataset):
             x, y = data
             self.history = self.model.fit(x,
-                                     y,
-                                     epochs=epochs,
-                                     batch_size=batch_size,
-                                     validation_data=val_data,
-                                     verbose=verbose,
-                                     callbacks=self.callbacks)
+                                          y,
+                                          epochs=epochs,
+                                          batch_size=batch_size,
+                                          validation_data=val_data,
+                                          verbose=verbose,
+                                          callbacks=self.callbacks)
         else:
             self.history = self.model.fit(data,
-                                     epochs=epochs,
-                                     validation_data=val_data,
-                                     verbose=verbose,
-                                     callbacks=self.callbacks)
+                                          epochs=epochs,
+                                          validation_data=val_data,
+                                          verbose=verbose,
+                                          callbacks=self.callbacks)
         return self.history
 
     def load_checkpoint(self, path: str, use_latest: bool = False):
