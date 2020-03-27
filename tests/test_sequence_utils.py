@@ -40,6 +40,9 @@ class TestSequenceUtils(TestCase):
         Check if transposition up and down by a whole step works on a sequence with notes in the extreme octaves.
         """
         sequence = [0, 12, 115, 127, 256, 128, 140, 243, 255]
-        self.assertListEqual([0, 12, 115, 127, 256, 128, 140, 243, 255], sequence_utils.transpose_sequence(sequence, 0))
-        self.assertListEqual([2, 14, 117, 117, 256, 130, 142, 245, 245], sequence_utils.transpose_sequence(sequence, 2))
-        self.assertListEqual([10, 10, 113, 125, 256, 138, 138, 241, 253], sequence_utils.transpose_sequence(sequence, -2))
+        self.assertListEqual([0, 12, 115, 127, 256, 128, 140, 243, 255],
+                             sequence_utils.transpose_sequence(sequence, 0))
+        self.assertListEqual([2, 14, 117, 117, 256, 130, 142, 245, 245],
+                             sequence_utils.transpose_sequence(sequence, 2))
+        self.assertListEqual([10, 10, 113, 125, 256, 138, 138, 241, 253],
+                             sequence_utils.transpose_sequence(sequence, -2))

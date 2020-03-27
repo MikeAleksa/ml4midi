@@ -114,7 +114,7 @@ class MusicModel:
         """
         Load weights from a checkpoint.
         :param path: the path to a checkpoint file
-        :param use_latest: if true, path should be a directory of checkpoints, otherwise path should indicate a checkpoint
+        :param use_latest: if true path should be a directory of checkpoints, otherwise path should be a checkpoint
         """
         if use_latest:
             ckpt = tf.train.latest_checkpoint(path)
