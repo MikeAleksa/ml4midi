@@ -52,13 +52,13 @@ class MusicModel:
 
         # TODO: learning rate scheduling
         def loss(labels, logits):
-            return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+            return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
         self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
     def __define_callbacks(self) -> list:
-        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=self.log_dir)
+        ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
+        tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1, profile_batch=500)
         return [ckpt_callback, tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
