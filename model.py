@@ -57,8 +57,11 @@ class MusicModel:
         self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
     def __define_callbacks(self) -> list:
-        ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path, save_weights_only=True)
-        tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1, profile_batch=500)
+        ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
+                                                        save_weights_only=True)
+        tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir,
+                                                           histogram_freq=1,
+                                                           profile_batch=2)
         return [ckpt_callback, tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
