@@ -61,7 +61,7 @@ class MusicModel:
                                                         save_weights_only=True)
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir,
                                                            histogram_freq=1,
-                                                           profile_batch=2)
+                                                           profile_batch='2,5')
         return [ckpt_callback, tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
