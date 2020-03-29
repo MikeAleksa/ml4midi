@@ -22,6 +22,7 @@ class TestSequenceUtils(TestCase):
         Check if transposition to all keys works on a sequence.
         """
         sequences = [[10, 11, 12]]
+        labels = [13]
         self.assertListEqual(sequence_utils.transpose(sequences), [[4, 5, 6],
                                                                    [5, 6, 7],
                                                                    [6, 7, 8],
@@ -34,6 +35,8 @@ class TestSequenceUtils(TestCase):
                                                                    [13, 14, 15],
                                                                    [14, 15, 16],
                                                                    [15, 16, 17]])
+        self.assertListEqual(sequence_utils.transpose(labels),
+                             [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 
     def test_transpose_sequence(self):
         """
