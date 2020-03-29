@@ -73,5 +73,5 @@ def normalize(sequences: list, n_classes: int) -> list:
     """
     normalized_sequences = []
     for sequence in sequences:
-        normalized_sequences.append([event / n_classes for event in sequence])
+        normalized_sequences.append([event / (n_classes-1) for event in sequence])
     return normalized_sequences
