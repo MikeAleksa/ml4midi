@@ -20,7 +20,7 @@ def window(sequences: list, window_size: int = 128, shift_size: int = 1):
     return windows, labels
 
 
-def transpose(sequences: list):
+def transpose(sequences: list) -> list:
     """
     Transpose event sequences into every key.
     :param sequences: list of event sequences
@@ -62,3 +62,16 @@ def transpose_sequence(sequence: list, semitones: int) -> list:
                 new_event += 12
         transposed_sequence.append(new_event)
     return transposed_sequence
+
+
+def normalize(sequences: list, n_classes: int) -> list:
+    """
+    Normalize events in a list of sequences.
+    :param sequences: a list of event sequences
+    :param n_classes: the number of classes to normalize to
+    :return: a list of normalized event sequences
+    """
+    normalized_sequences = []
+    for sequence in sequences:
+        normalized_sequences.append([event / n_classes for event in sequence])
+    return normalized_sequences
