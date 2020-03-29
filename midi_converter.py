@@ -57,14 +57,15 @@ class DiscreteTimeMidiConverter(MidiConverter):
     A MIDI converter that quantizes events to discrete time steps.
     """
 
-    def __init__(self, samples: int = 500, bpm: int = 120, n_classes: int = 384):
+    def __init__(self, samples: int = 500, bpm: int = 120, wait_classes: int = 128):
         """
         Set up variables to use for quantization and conversion of events between BPM and discrete time steps
         :param samples: the number of discrete samples per second, used to quantize event - defaults to 2ms steps
         :param bpm: the bpm for any output midi files
-        :param n_classes: the number of classes
+        :param wait_classes: the number of classes representing 'wait time' events
         """
-        super().__init__(n_classes=n_classes)
+        super().__init__(n_classes=256 + wait_classes)
+        self.wait_classes = wait_classes
         self.samples = samples
         self.BPM = bpm
         self.TPB = int(self.samples * 60 * (1 / self.BPM))
@@ -92,10 +93,11 @@ class DiscreteTimeMidiConverter(MidiConverter):
                     chord.clear()
 
                     # append wait events
+                    max_wait_event = self.wait_classes - 1
                     scaled_time = int(round(time * self.samples)) - 1
-                    while scaled_time > 127:
-                        seq.append(127 + 256)
-                        scaled_time = scaled_time - 128
+                    while scaled_time > max_wait_event:
+                        seq.append(max_wait_event + 256)
+                        scaled_time = scaled_time - self.wait_classes
                     if scaled_time >= 0:
                         seq.append(scaled_time + 256)
                     time = 0.0
