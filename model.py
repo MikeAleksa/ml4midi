@@ -23,6 +23,7 @@ class MusicModel:
                  dense_size: int,
                  dense_layers: int,
                  dropout_rate: float,
+                 batch_norm: bool = True,
                  ckpt_dir: str = './training_checkpoints',
                  log_dir: str = './logs'):
         """
@@ -44,6 +45,7 @@ class MusicModel:
         self.dense_size = dense_size
         self.dense_layers = dense_layers
         self.dropout_rate = dropout_rate
+        self.batch_norm = batch_norm
         self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
         self.log_dir = str(Path(log_dir) / Path(strftime("%Y-%m-%d-%H%M", localtime())))
         self.callbacks = self.__define_callbacks()
@@ -70,17 +72,28 @@ class MusicModel:
         :return: a keras sequential model
         """
         model = keras.Sequential()
+
+        # embedding layer
         model.add(keras.layers.Embedding(self.n_classes, self.embed_dims, batch_input_shape=[None, None]))
+
+        # lstm layers
         for _ in range(self.rnn_layers - 1):
             model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
             model.add(keras.layers.Dropout(self.dropout_rate))
-            model.add(keras.layers.BatchNormalization())
+            if self.batch_norm:
+                model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.LSTM(self.rnn_size))
         model.add(keras.layers.Dropout(self.dropout_rate))
-        model.add(keras.layers.BatchNormalization())
+        if self.batch_norm:
+            model.add(keras.layers.BatchNormalization())
+
+        # dense layers
         for _ in range(self.dense_layers - 1):
             model.add(keras.layers.Dense(units=self.dense_size))
+            if self.batch_norm:
+                model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.Dense(units=self.n_classes))
+        
         return model
 
     def fit(self,
