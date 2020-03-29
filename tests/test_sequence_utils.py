@@ -46,13 +46,3 @@ class TestSequenceUtils(TestCase):
                              sequence_utils.transpose_sequence(sequence, 2))
         self.assertListEqual([10, 10, 113, 125, 256, 138, 138, 241, 253],
                              sequence_utils.transpose_sequence(sequence, -2))
-
-    def test_normalize(self):
-        """
-        Check normalization function.
-        """
-        sequences = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                    [3, 4, 5]]
-        normalized = [[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-                      [0.3, 0.4, 0.5]]
-        self.assertListEqual(normalized, sequence_utils.normalize(sequences, 11))
