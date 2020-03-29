@@ -56,7 +56,7 @@ class MusicModel:
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
-        self.model.compile(loss=loss, optimizer='adam', metrics=[keras.metrics.SparseCategoricalAccuracy()])
+        self.model.compile(loss=loss, optimizer='adam', metrics=['sparse_categorical_accuracy'])
 
     def __define_callbacks(self) -> list:
         ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
@@ -89,7 +89,7 @@ class MusicModel:
 
         # dense layers
         for _ in range(self.dense_layers - 1):
-            model.add(keras.layers.Dense(units=self.dense_size))
+            model.add(keras.layers.Dense(units=self.dense_size, activation='relu'))
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.Dense(units=self.n_classes))
