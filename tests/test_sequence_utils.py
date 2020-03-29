@@ -46,3 +46,14 @@ class TestSequenceUtils(TestCase):
                              sequence_utils.transpose_sequence(sequence, 2))
         self.assertListEqual([10, 10, 113, 125, 256, 138, 138, 241, 253],
                              sequence_utils.transpose_sequence(sequence, -2))
+
+    def test_transpose_event(self):
+        """
+        Check transposition of a single event label
+        """
+        self.assertEqual(3, sequence_utils.transpose_event(1, 2))
+        self.assertEqual(11, sequence_utils.transpose_event(0, -1))
+        self.assertEqual(116, sequence_utils.transpose_event(127, 1))
+        self.assertEqual(139, sequence_utils.transpose_event(128, -1))
+        self.assertEqual(244, sequence_utils.transpose_event(255, 1))
+        self.assertEqual(256, sequence_utils.transpose_event(256, 1))

@@ -22,14 +22,17 @@ def window(sequences: list, window_size: int = 128, shift_size: int = 1):
 
 def transpose(sequences: list) -> list:
     """
-    Transpose event sequences into every key.
+    Transpose event sequences or labels into every key.
     :param sequences: list of event sequences
     :return: a list containing all event sequences and their transpositions
     """
     transposed_sequences = []
-    for sequence in sequences:
+    for elem in sequences:
         for semitone in range(-6, 6):
-            transposed_sequences.append(transpose_sequence(sequence, semitone))
+            if isinstance(elem, list):
+                transposed_sequences.append(transpose_sequence(elem, semitone))
+            elif isinstance(elem, int):
+                transposed_sequences.append(transpose_event(elem, semitone))
     return transposed_sequences
 
 
@@ -45,20 +48,34 @@ def transpose_sequence(sequence: list, semitones: int) -> list:
     assert (-12 <= semitones <= 12)
     transposed_sequence = []
     for event in sequence:
-        new_event = event
-        # transpose note-on events
-        if 0 <= new_event <= 127:
-            new_event = event + semitones
-            if new_event > 127:
-                new_event -= 12
-            if new_event < 0:
-                new_event += 12
-        # transpose note-off events
-        elif 128 <= new_event <= 255:
-            new_event = event + semitones
-            if new_event > 255:
-                new_event -= 12
-            if new_event < 128:
-                new_event += 12
+        new_event = transpose_event(event, semitones)
         transposed_sequence.append(new_event)
     return transposed_sequence
+
+
+def transpose_event(event: int, semitones: int) -> int:
+    """
+    Transpose a single event label.
+
+    Transposition is limited to one octave up/down. Notes already in the highest/lowest octave will not be transposed.
+    :param event: an integer representing an event class
+    :param semitones: the number of semitones to transpose
+    :return: a transposed event
+    """
+    assert (-12 <= semitones <= 12)
+    new_event = event
+    # transpose note-on events
+    if 0 <= new_event <= 127:
+        new_event = event + semitones
+        if new_event > 127:
+            new_event -= 12
+        if new_event < 0:
+            new_event += 12
+    # transpose note-off events
+    elif 128 <= new_event <= 255:
+        new_event = event + semitones
+        if new_event > 255:
+            new_event -= 12
+        if new_event < 128:
+            new_event += 12
+    return new_event
