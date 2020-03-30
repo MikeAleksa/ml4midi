@@ -75,7 +75,7 @@ class MusicModel:
                                                         patience=5,
                                                         verbose=1,
                                                         min_lr=0.001)
-        return [ckpt_callback, tensorboard_callback]
+        return [ckpt_callback, tensorboard_callback, lr_callback]
 
     def __build_model(self) -> keras.Sequential:
         """
