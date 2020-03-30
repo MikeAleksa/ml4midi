@@ -58,7 +58,6 @@ class MusicModel:
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
-        # TODO: learning rate scheduling
         optimizer = keras.optimizers.Adam(learning_rate=init_lr)
 
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
@@ -73,8 +72,7 @@ class MusicModel:
 
         lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.5,
                                                         patience=5,
-                                                        verbose=1,
-                                                        min_lr=0.001)
+                                                        verbose=1)
         return [ckpt_callback, tensorboard_callback, lr_callback]
 
     def __build_model(self) -> keras.Sequential:
