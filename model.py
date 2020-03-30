@@ -53,10 +53,10 @@ class MusicModel:
         self.model = self.__build_model()
         self.history = None
 
-        # TODO: learning rate scheduling
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
-        
+
+        # TODO: learning rate scheduling
         optimizer = keras.optimizers.Adam(learning_rate=init_lr)
 
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
@@ -96,7 +96,7 @@ class MusicModel:
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.Dense(units=self.n_classes))
-        
+
         return model
 
     def fit(self,
