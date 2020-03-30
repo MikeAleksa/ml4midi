@@ -66,9 +66,15 @@ class MusicModel:
     def __define_callbacks(self) -> list:
         ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
                                                         save_weights_only=True)
+
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir,
                                                            histogram_freq=1,
                                                            profile_batch='2,5')
+
+        lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.5,
+                                                        patience=5,
+                                                        verbose=1,
+                                                        min_lr=0.001)
         return [ckpt_callback, tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
