@@ -24,6 +24,7 @@ class MusicModel:
                  dense_layers: int,
                  dropout_rate: float,
                  batch_norm: bool = True,
+                 init_lr: float = 0.001,
                  ckpt_dir: str = './training_checkpoints',
                  log_dir: str = './logs'):
         """
@@ -55,8 +56,10 @@ class MusicModel:
         # TODO: learning rate scheduling
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+        
+        optimizer = keras.optimizers.Adam(learning_rate=init_lr)
 
-        self.model.compile(loss=loss, optimizer='adam', metrics=['sparse_categorical_accuracy'])
+        self.model.compile(loss=loss, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
     def __define_callbacks(self) -> list:
         ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
