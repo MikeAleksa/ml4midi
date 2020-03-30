@@ -36,6 +36,8 @@ class MusicModel:
         :param dense_size: dense layer units
         :param dense_layers: number of dense layers
         :param dropout_rate: lstm-layer dropout rate
+        :param batch_norm: a boolean value indicating whether or not to use batch normalization layers
+        :param init_lr: the initial learning rate of the Adam optimizer
         :param ckpt_dir: directory to save checkpoints
         :param log_dir: directory to save tensorboard logs
         """
