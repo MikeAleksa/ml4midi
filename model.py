@@ -25,6 +25,7 @@ class MusicModel:
                  dropout_rate: float,
                  batch_norm: bool = True,
                  init_lr: float = 0.001,
+                 dense_activation: str = 'relu'
                  ckpt_dir: str = './training_checkpoints',
                  log_dir: str = './logs'):
         """
@@ -38,6 +39,7 @@ class MusicModel:
         :param dropout_rate: lstm-layer dropout rate
         :param batch_norm: a boolean value indicating whether or not to use batch normalization layers
         :param init_lr: the initial learning rate of the Adam optimizer
+        :param dense_activation: activation function for dense layers (excluding final output layer)
         :param ckpt_dir: directory to save checkpoints
         :param log_dir: directory to save tensorboard logs
         """
@@ -47,6 +49,7 @@ class MusicModel:
         self.rnn_layers = rnn_layers
         self.dense_size = dense_size
         self.dense_layers = dense_layers
+        self.dense_activation = dense_activation
         self.dropout_rate = dropout_rate
         self.batch_norm = batch_norm
         self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
@@ -96,7 +99,7 @@ class MusicModel:
 
         # dense layers
         for _ in range(self.dense_layers - 1):
-            model.add(keras.layers.Dense(units=self.dense_size, activation='relu'))
+            model.add(keras.layers.Dense(units=self.dense_size, activation=dense_activation))
             model.add(keras.layers.Dropout(self.dropout_rate))
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
