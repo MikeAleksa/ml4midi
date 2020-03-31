@@ -25,7 +25,7 @@ class MusicModel:
                  dropout_rate: float,
                  batch_norm: bool = True,
                  init_lr: float = 0.001,
-                 dense_activation: str = 'relu'
+                 dense_activation: str = 'relu',
                  ckpt_dir: str = './training_checkpoints',
                  log_dir: str = './logs'):
         """
