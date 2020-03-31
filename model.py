@@ -99,7 +99,7 @@ class MusicModel:
 
         # dense layers
         for _ in range(self.dense_layers - 1):
-            model.add(keras.layers.Dense(units=self.dense_size, activation=dense_activation))
+            model.add(keras.layers.Dense(units=self.dense_size, activation=self.dense_activation))
             model.add(keras.layers.Dropout(self.dropout_rate))
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
