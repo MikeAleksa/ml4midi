@@ -16,13 +16,13 @@ class MusicModel:
         return self.model.summary
 
     def __init__(self,
-                 n_classes: int,
-                 embed_dims: int,
+                 n_classes: int = 384,
+                 embed_dims: int = 32,
                  rnn_size: int = 256,
                  rnn_layers: int = 1,
                  dense_size: int = 256,
                  dense_layers: int = 2,
-                 dropout_rate: float,
+                 dropout_rate: float = 0.3,
                  batch_norm: bool = True,
                  init_lr: float = 0.003,
                  dense_activation: str = 'relu',
