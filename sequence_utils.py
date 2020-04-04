@@ -20,15 +20,17 @@ def window(sequences: list, window_size: int = 128, shift_size: int = 1):
     return windows, labels
 
 
-def transpose(sequences: list) -> list:
+def transpose(sequences: list, down: int = 0, up: int = 0) -> list:
     """
-    Transpose event sequences or labels into every key.
+    Transpose event sequences or labels by a range of semitones.
     :param sequences: list of event sequences
+    :param down: range of transposition down, in semitones
+    :param up: range of transposition up, in semitones
     :return: a list containing all event sequences and their transpositions
     """
     transposed_sequences = []
     for elem in sequences:
-        for semitone in range(-6, 6):
+        for semitone in range(down, up+1):
             if isinstance(elem, list):
                 transposed_sequences.append(transpose_sequence(elem, semitone))
             elif isinstance(elem, int):

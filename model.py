@@ -77,7 +77,7 @@ class MusicModel:
                                                                factor=0.5,
                                                                patience=5,
                                                                min_lr=0.00001,
-                                                               cooldown=5,
+                                                               cooldown=3,
                                                                verbose=1)
 
         
