@@ -61,20 +61,29 @@ class MusicModel:
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
-        optimizer = keras.optimizers.Adam(learning_rate=init_lr)
+        optimizer = keras.optimizers.Adam(learning_rate=init_lr, clipvalue=5.0)
 
         self.model.compile(loss=loss, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
     def __define_callbacks(self) -> list:
         ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
                                                         save_weights_only=True)
+        
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir,
                                                            histogram_freq=1,
                                                            profile_batch='2,5')
-        lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.5,
-                                                        patience=5,
-                                                        verbose=1)
-        return [ckpt_callback, tensorboard_callback, lr_callback]
+        
+        reduce_lr_callback = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
+                                                               factor=0.5,
+                                                               patience=5,
+                                                               min_lr=0.00001,
+                                                               cooldown=5,
+                                                               verbose=1)
+
+        
+        return [ckpt_callback,
+                reduce_lr_callback,
+                tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
         """
