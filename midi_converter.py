@@ -15,7 +15,7 @@ class MidiConverter(ABC):
         Set up any variables needed for MIDI conversion.
         :param n_classes: the number of event classes used in conversion scheme
         """
-        self.N_CLASSES = n_classes
+        self.n_classes = n_classes
 
     @abstractmethod
     def convert_file(self, path) -> list:
