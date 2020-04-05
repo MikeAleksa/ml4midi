@@ -73,16 +73,16 @@ class MusicModel:
                                                            histogram_freq=1,
                                                            profile_batch='2,5')
         
-        reduce_lr_callback = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
-                                                               factor=0.5,
-                                                               patience=5,
-                                                               min_lr=0.00001,
-                                                               cooldown=3,
-                                                               verbose=1)
+#         reduce_lr_callback = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
+#                                                                factor=0.5,
+#                                                                patience=2,
+#                                                                min_lr=0.00001,
+#                                                                cooldown=1,
+#                                                                verbose=1)
 
         
         return [ckpt_callback,
-                reduce_lr_callback,
+#                 reduce_lr_callback,
                 tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
@@ -92,24 +92,47 @@ class MusicModel:
         """
         model = keras.Sequential()
 
-        # embedding layer
-        model.add(keras.layers.Embedding(self.n_classes, self.embed_dims, batch_input_shape=[None, None]))
-
-        # lstm layers
-        for _ in range(self.rnn_layers - 1):
-            model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
-            model.add(keras.layers.Dropout(self.dropout_rate))
+        # with embedding layer
+        if self.embed_dims:
+            model.add(keras.layers.Embedding(self.n_classes, self.embed_dims, batch_input_shape=[None, None]))       
+            # lstm layers
+            for _ in range(self.rnn_layers - 1):
+                model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
+                if self.dropout_rate:
+                    model.add(keras.layers.Dropout(self.dropout_rate))
+                if self.batch_norm:
+                    model.add(keras.layers.BatchNormalization())
+            model.add(keras.layers.LSTM(self.rnn_size))
+            if self.dropout_rate:
+                model.add(keras.layers.Dropout(self.dropout_rate))
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
-        model.add(keras.layers.LSTM(self.rnn_size))
-        model.add(keras.layers.Dropout(self.dropout_rate))
-        if self.batch_norm:
-            model.add(keras.layers.BatchNormalization())
+                
+        # without embedding layer
+        else:
+            model.add(keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1), input_shape=[None]))
+            model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True, input_shape=(None, 1)))
+            if self.dropout_rate:
+                model.add(keras.layers.Dropout(self.dropout_rate))
+            if self.batch_norm:
+                model.add(keras.layers.BatchNormalization())
+            for _ in range(self.rnn_layers - 2):
+                model.add(keras.layers.LSTM(self.rnn_size, return_sequences=True))
+                if self.dropout_rate:
+                    model.add(keras.layers.Dropout(self.dropout_rate))
+                if self.batch_norm:
+                    model.add(keras.layers.BatchNormalization())
+            model.add(keras.layers.LSTM(self.rnn_size))
+            if self.dropout_rate:
+                model.add(keras.layers.Dropout(self.dropout_rate))
+            if self.batch_norm:
+                model.add(keras.layers.BatchNormalization())
 
         # dense layers
         for _ in range(self.dense_layers - 1):
             model.add(keras.layers.Dense(units=self.dense_size, activation=self.dense_activation))
-            model.add(keras.layers.Dropout(self.dropout_rate))
+            if self.dropout_rate:
+                model.add(keras.layers.Dropout(self.dropout_rate))
             if self.batch_norm:
                 model.add(keras.layers.BatchNormalization())
         model.add(keras.layers.Dense(units=self.n_classes))
