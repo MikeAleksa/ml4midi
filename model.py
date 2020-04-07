@@ -1,5 +1,4 @@
 from pathlib import Path
-from time import localtime, strftime
 
 import numpy as np
 import tensorflow as tf
@@ -16,15 +15,15 @@ class MusicModel:
         return self.model.summary
 
     def __init__(self,
-                 n_classes: int = 384,
-                 embed_dims: int = 32,
+                 n_classes: int = 356,
+                 embed_dims: int = 128,
                  rnn_size: int = 256,
-                 rnn_layers: int = 1,
+                 rnn_layers: int = 3,
                  dense_size: int = 256,
                  dense_layers: int = 2,
-                 dropout_rate: float = 0.3,
+                 dropout_rate: float = 0.1,
                  batch_norm: bool = True,
-                 init_lr: float = 0.003,
+                 init_lr: float = None,
                  dense_activation: str = 'relu',
                  ckpt_dir: str = './training_checkpoints',
                  log_dir: str = './logs'):
@@ -53,7 +52,7 @@ class MusicModel:
         self.dropout_rate = dropout_rate
         self.batch_norm = batch_norm
         self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
-        self.log_dir = str(Path(log_dir) / Path(strftime("%Y-%m-%d-%H%M", localtime())))
+        self.log_dir = log_dir
         self.callbacks = self.__define_callbacks()
         self.model = self.__build_model()
         self.history = None
@@ -73,16 +72,15 @@ class MusicModel:
                                                            histogram_freq=1,
                                                            profile_batch='2,5')
         
-#         reduce_lr_callback = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
-#                                                                factor=0.5,
-#                                                                patience=2,
-#                                                                min_lr=0.00001,
-#                                                                cooldown=1,
-#                                                                verbose=1)
-
+        reduce_lr_callback = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
+                                                               factor=0.3,
+                                                               patience=2,
+                                                               min_lr=0.000001,
+                                                               cooldown=5,
+                                                               verbose=1)
         
         return [ckpt_callback,
-#                 reduce_lr_callback,
+                reduce_lr_callback,
                 tensorboard_callback]
 
     def __build_model(self) -> keras.Sequential:
@@ -144,7 +142,8 @@ class MusicModel:
             val_data=None,
             epochs: int = 1,
             batch_size: int = None,
-            verbose: int = 0) -> keras.callbacks.History:
+            verbose: int = 0,
+            initial_epoch: int = 0) -> keras.callbacks.History:
         """
         Train model on dataset.
         :param data: a dataset of event sequences - can be a tf.data.Dataset or tuple of (examples, labels)
@@ -152,6 +151,7 @@ class MusicModel:
         :param epochs: the number of epochs to train
         :param batch_size: the size of batch to train on (not used with tf.data.Dataset)
         :param verbose: verbosity
+        :param initial_epoch: epoch to start training at
         :return: an object containing data about
         """
         if not isinstance(data, tf.data.Dataset):
@@ -162,13 +162,15 @@ class MusicModel:
                                           batch_size=batch_size,
                                           validation_data=val_data,
                                           verbose=verbose,
-                                          callbacks=self.callbacks)
+                                          callbacks=self.callbacks,
+                                          initial_epoch=initial_epoch)
         else:
             self.history = self.model.fit(data,
                                           epochs=epochs,
                                           validation_data=val_data,
                                           verbose=verbose,
-                                          callbacks=self.callbacks)
+                                          callbacks=self.callbacks,
+                                          initial_epoch=initial_epoch)
         return self.history
 
     def load_checkpoint(self, path: str, use_latest: bool = False):
