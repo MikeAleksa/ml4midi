@@ -57,7 +57,7 @@ class DiscreteTimeMidiConverter(MidiConverter):
     A MIDI converter that quantizes events to discrete time steps.
     """
 
-    def __init__(self, samples: int = 500, bpm: int = 120, wait_classes: int = 128):
+    def __init__(self, samples: int = 500, bpm: int = 120, wait_classes: int = 100):
         """
         Set up variables to use for quantization and conversion of events between BPM and discrete time steps
         :param samples: the number of discrete samples per second, used to quantize event - defaults to 2ms steps
