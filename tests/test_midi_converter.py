@@ -8,7 +8,7 @@ from midi_converter import DiscreteTimeMidiConverter
 
 class TestDiscreteTimeMidiConverter(TestCase):
     def setUp(self) -> None:
-        self.mc = DiscreteTimeMidiConverter()
+        self.mc = DiscreteTimeMidiConverter(wait_classes=128)
 
     def test_convert_file(self):
         """

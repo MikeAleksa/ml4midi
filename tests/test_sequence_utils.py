@@ -23,7 +23,7 @@ class TestSequenceUtils(TestCase):
         """
         sequences = [[10, 11, 12]]
         labels = [13]
-        self.assertListEqual(sequence_utils.transpose(sequences, down=-6, up=6), [[4, 5, 6],
+        self.assertListEqual(sequence_utils.transpose(sequences, down=-6, up=5), [[4, 5, 6],
                                                                                   [5, 6, 7],
                                                                                   [6, 7, 8],
                                                                                   [7, 8, 9],
@@ -35,7 +35,7 @@ class TestSequenceUtils(TestCase):
                                                                                   [13, 14, 15],
                                                                                   [14, 15, 16],
                                                                                   [15, 16, 17]])
-        self.assertListEqual(sequence_utils.transpose(labels, down=-6, up=6),
+        self.assertListEqual(sequence_utils.transpose(labels, down=-6, up=5),
                              [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 
     def test_transpose_sequence(self):
