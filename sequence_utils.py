@@ -81,28 +81,3 @@ def transpose_event(event: int, semitones: int) -> int:
         if new_event < 128:
             new_event += 12
     return new_event
-
-# def normalize(sequences: list, n_classes: int) -> list:
-#     """
-#     Normalize events in a sequence of events.
-#     :param sequences: a list of event sequences
-#     :param n_classes: the total number of classes of events
-#     :return: a normalized list of event sequences
-#     """
-#     normalized_sequences = []
-#     scale = n_classes - 1
-#     for sequence in sequences:
-#         norm_seq = [x / scale for x in sequence]
-#         normalized_sequences.append(norm_seq)
-#     return normalized_sequences
-
-# def denormalize(sequence: list, n_classes: int) -> list:
-#     """
-#     De-normalize events in a sequence of events.
-#     :param sequences: a normalized event sequence
-#     :param n_classes: the total number of classes of events
-#     :return: a normalized list of event sequences
-#     """
-#     scale = n_classes - 1
-#     denormalized_sequence = [x * scale for x in sequence]
-#     return denormalized_sequence
