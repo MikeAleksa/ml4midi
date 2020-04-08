@@ -51,14 +51,14 @@ class MusicModel(keras.Sequential):
         self.init_lr = init_lr
         self.ckpt_path = str(Path(ckpt_dir) / 'ckpt_{epoch}')
         self.log_dir = log_dir
-        self.__build_model()
+        self.default_callbacks = self.__define_callbacks()
 
         def loss(labels, logits):
             return keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
         optimizer = keras.optimizers.Adam(learning_rate=init_lr, clipvalue=5.0)
 
-        self.default_callbacks = self.__define_callbacks()
+        self.__build_model()
         self.compile(loss=loss, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
     def __define_callbacks(self) -> list:
@@ -86,7 +86,7 @@ class MusicModel(keras.Sequential):
 
     def __build_model(self):
         """
-        Build model using hyperparameters of MusicModel.
+        Build model using hyper-parameters of MusicModel.
         """
         # with embedding layer
         if self.embed_dims:
