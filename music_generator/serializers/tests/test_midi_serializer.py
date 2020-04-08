@@ -3,19 +3,19 @@ from unittest import TestCase
 
 import mido
 
-from music_generator.midi_converter import DiscreteTimeMidiConverter
+from music_generator.serializers.discrete_time_serializer import DiscreteTimeMidiSerializer
 
 
-class TestDiscreteTimeMidiConverter(TestCase):
+class TestDiscreteTimeMidiSerializer(TestCase):
     def setUp(self) -> None:
-        self.mc = DiscreteTimeMidiConverter(wait_classes=128)
+        self.serializer = DiscreteTimeMidiSerializer(wait_classes=128)
 
-    def test_convert_file(self):
+    def test_serialize(self):
         """
-        Check if a simple midi file can be converted to a sequence.
+        Check if a simple midi file can be serialized to a sequence.
         """
         test_midi_file = 'test_midi/test_midi_002.mid'
-        sequence = self.mc.convert_file(test_midi_file)
+        sequence = self.serializer.serialize(test_midi_file)
         # midi file is the same as the one that should be created in test_sequence_to_midi
         expected_sequence = []
         for i in range(128):
@@ -25,9 +25,9 @@ class TestDiscreteTimeMidiConverter(TestCase):
             expected_sequence.append(i + 128)
         self.assertListEqual(expected_sequence, sequence)
 
-    def test_convert_to_file(self):
+    def test_deserialize(self):
         """
-        Check if a simple sequence can be correctly converted to MIDI.
+        Check if a simple sequence can be correctly deserialized to MIDI.
         """
         test_sequence = []
         for i in range(128):
@@ -38,7 +38,7 @@ class TestDiscreteTimeMidiConverter(TestCase):
             test_sequence.append(i + 128)
 
         # save the resulting sequence
-        self.mc.convert_to_file(test_sequence, './test_midi/', 'test_midi_001.mid')
+        self.serializer.deserialize(test_sequence, './test_midi/', 'test_midi_001.mid')
 
         # load resulting sequence in mido
         midi = mido.MidiFile('test_midi/test_midi_001.mid')
@@ -49,19 +49,19 @@ class TestDiscreteTimeMidiConverter(TestCase):
         for m1, m2 in zip(messages[::2], messages[1::2]):
             self.assertTrue('note_on' == m1.type)
             self.assertTrue(i == m1.note)
-            self.assertAlmostEqual((i + 1) / self.mc.samples, round(m1.time, 10))
+            self.assertAlmostEqual((i + 1) / self.serializer.samples, round(m1.time, 10))
             self.assertTrue('note_off' == m2.type)
             self.assertTrue(i == m2.note)
-            self.assertAlmostEqual((i + 1) / self.mc.samples, round(m2.time, 10))
+            self.assertAlmostEqual((i + 1) / self.serializer.samples, round(m2.time, 10))
             i += 1
 
-    def test_bach_chorale_conversion(self):
+    def test_bach_chorale_serialize(self):
         """
-        Check if all bach chorale MIDI files can be successfully converted to sequences and back to MIDI.
+        Check if all bach chorale MIDI files can be successfully serialized to sequences and back to MIDI.
         """
         paths = Path('./test_midi/bach_chorales_midi').glob('*.mid')
         for path in paths:
-            sequence = self.mc.convert_file(path)
-            self.mc.convert_to_file(sequence, './test_midi/', 'converted.mid')
-            converted_sequence = self.mc.convert_file('./test_midi/converted.mid')
+            sequence = self.serializer.serialize(path)
+            self.serializer.deserialize(sequence, './test_midi/', 'converted.mid')
+            converted_sequence = self.serializer.serialize('./test_midi/converted.mid')
             self.assertListEqual(sequence, converted_sequence)

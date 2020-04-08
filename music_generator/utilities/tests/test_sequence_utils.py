@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from music_generator import sequence_utils
+from music_generator.utilities import sequence_utils
 
 
 class TestSequenceUtils(TestCase):

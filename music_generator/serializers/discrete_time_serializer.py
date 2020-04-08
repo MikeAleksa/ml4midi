@@ -1,65 +1,18 @@
-from abc import ABC, abstractmethod
 from pathlib import Path
 
 import mido
 
+from music_generator.serializers.midi_serializer import MidiSerializer
 
-class MidiConverter(ABC):
+
+class DiscreteTimeMidiSerializer(MidiSerializer):
     """
-    Abstract base class for MIDI converter.
-    """
-
-    @abstractmethod
-    def __init__(self, n_classes: int):
-        """
-        Set up any variables needed for MIDI conversion.
-        :param n_classes: the number of event classes used in conversion scheme
-        """
-        self.n_classes = n_classes
-
-    @abstractmethod
-    def convert_file(self, path) -> list:
-        """
-        Convert a single file from MIDI to an event sequence.
-        :param path: the path to the MIDI file
-        :return: an event sequence
-        """
-        pass
-
-    @abstractmethod
-    def convert_folder(self, path) -> list:
-        """
-        Convert a folder of MIDI files into a list of event sequences.
-        :param path: the path to the folder of MIDI files
-        :return: a list of event sequences
-        """
-        if not isinstance(path, Path):
-            path = Path(path)
-        files = path.glob('*.mid')
-        sequences = []
-        for file in files:
-            sequences.append(self.convert_file(file))
-        return sequences
-
-    @abstractmethod
-    def convert_to_file(self, seq, path, filename):
-        """
-        Convert an event sequence into a MIDI file.
-        :param seq: an event sequence
-        :param path: the output path for the MIDI file
-        :param filename: the output filename for the MIDI file
-        """
-        pass
-
-
-class DiscreteTimeMidiConverter(MidiConverter):
-    """
-    A MIDI converter that quantizes events to discrete time steps.
+    A MIDI serializer that quantizes events to discrete time steps.
     """
 
     def __init__(self, samples: int = 500, bpm: int = 120, wait_classes: int = 100):
         """
-        Set up variables to use for quantization and conversion of events between BPM and discrete time steps
+        Set up variables to use for quantization and serialization of events between BPM and discrete time steps
         :param samples: the number of discrete samples per second, used to quantize event - defaults to 2ms steps
         :param bpm: the bpm for any output midi files
         :param wait_classes: the number of classes representing 'wait time' events
@@ -70,9 +23,9 @@ class DiscreteTimeMidiConverter(MidiConverter):
         self.BPM = bpm
         self.TPB = int(self.samples * 60 * (1 / self.BPM))
 
-    def convert_file(self, path) -> list:
+    def serialize(self, path) -> list:
         """
-        Convert a single file from MIDI to an event sequence, quantized into discrete time steps.
+        Serialize a single file from MIDI to an event sequence, quantized into discrete time steps.
         :param path: the path to the MIDI file
         :return: an event sequence
         """
@@ -117,17 +70,17 @@ class DiscreteTimeMidiConverter(MidiConverter):
 
         return seq
 
-    def convert_folder(self, path) -> list:
+    def serialize_folder(self, path) -> list:
         """
-        Convert a folder of MIDI files into a list of event sequences.
+        Serialize a folder of MIDI files into a list of event sequences.
         :param path: the path to the folder of MIDI files
         :return: a list of event sequences
         """
-        return super().convert_folder(path)
+        return super().serialize_folder(path)
 
-    def convert_to_file(self, seq, path, filename):
+    def deserialize(self, seq, path, filename):
         """
-        Convert an event sequence into a MIDI file.
+        Serialize an event sequence into a MIDI file.
         :param seq: an event sequence
         :param path: the output path for the MIDI file
         :param filename: the output filename for the MIDI file
