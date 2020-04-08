@@ -15,6 +15,6 @@ def check_cuda_and_gpu() -> list:
     if not tf.config.list_physical_devices('GPU'):
         warnings.append('WARNING: No GPU Available.')
     if not warnings:
-        warnings.append('CUDA and GPU Available...')
+        warnings.append('CUDA and GPU Available.')
 
     return warnings
