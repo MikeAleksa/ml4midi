@@ -1,9 +1,9 @@
-from unittest import TestCase
 from pathlib import Path
+from unittest import TestCase
 
 import mido
 
-from midi_converter import DiscreteTimeMidiConverter
+from music_generator.midi_converter import DiscreteTimeMidiConverter
 
 
 class TestDiscreteTimeMidiConverter(TestCase):
