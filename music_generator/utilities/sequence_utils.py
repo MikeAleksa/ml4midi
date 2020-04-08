@@ -3,7 +3,7 @@ A collection of utilities for manipulating event sequences.
 """
 
 
-def window(sequences: list, window_size: int = 128, shift_size: int = 1):
+def window(sequences: list, window_size: int = 100, shift_size: int = 1):
     """
     Window and split event sequences into lists of windows and labels.
     :param sequences: list of event sequences

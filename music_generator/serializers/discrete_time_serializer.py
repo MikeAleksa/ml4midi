@@ -10,7 +10,7 @@ class DiscreteTimeMidiSerializer(MidiSerializer):
     A MIDI serializer that quantizes events to discrete time steps.
     """
 
-    def __init__(self, samples: int = 500, bpm: int = 120, wait_classes: int = 100):
+    def __init__(self, samples: int = 1000, bpm: int = 120, wait_classes: int = 100):
         """
         Set up variables to use for quantization and serialization of events between BPM and discrete time steps
         :param samples: the number of discrete samples per second, used to quantize event - defaults to 2ms steps
@@ -95,7 +95,7 @@ class DiscreteTimeMidiSerializer(MidiSerializer):
         if not isinstance(path, Path):
             path = Path(path)
         if not path.is_dir():
-            path.mkdir()
+            path.mkdir(parents=True)
 
         for event in seq:
             if event >= 256:
