@@ -2,8 +2,13 @@
 A collection of utilities for manipulating event sequences.
 """
 
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
 
-def window(sequences: list, window_size: int = 100, shift_size: int = 1):
+
+def window(sequences: list,
+           window_size: int = 100,
+           shift_size: int = 1):
     """
     Window and split event sequences into lists of windows and labels.
     :param sequences: list of event sequences
@@ -20,7 +25,9 @@ def window(sequences: list, window_size: int = 100, shift_size: int = 1):
     return windows, labels
 
 
-def transpose(sequences: list, down: int = 0, up: int = 0) -> list:
+def transpose(sequences: list,
+              down: int = 0,
+              up: int = 0) -> list:
     """
     Transpose event sequences or labels by a range of semitones.
     :param sequences: list of event sequences
@@ -38,7 +45,8 @@ def transpose(sequences: list, down: int = 0, up: int = 0) -> list:
     return transposed_sequences
 
 
-def transpose_sequence(sequence: list, semitones: int) -> list:
+def transpose_sequence(sequence: list,
+                       semitones: int) -> list:
     """
     Transpose notes in a sequence of events.
 
@@ -55,7 +63,8 @@ def transpose_sequence(sequence: list, semitones: int) -> list:
     return transposed_sequence
 
 
-def transpose_event(event: int, semitones: int) -> int:
+def transpose_event(event: int,
+                    semitones: int) -> int:
     """
     Transpose a single event label.
 
@@ -81,3 +90,21 @@ def transpose_event(event: int, semitones: int) -> int:
         if new_event < 128:
             new_event += 12
     return new_event
+
+def make_tf_datasets(sequences: list,
+                     labels: list,
+                     batch_size: int = 128,
+                     test_size: float = 0.05) -> (tf.data.Dataset, tf.data.Dataset):
+    """
+    # TODO: write documentation
+    """
+    x_train, x_val, y_train, y_val = train_test_split(sequences, labels, test_size=test_size, shuffle=True)
+    print('Training Sequences: {}\nValidation Sequences: {}'.format(len(y_train), len(y_val)))
+
+    dataset_train = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    dataset_val = tf.data.Dataset.from_tensor_slices((x_val, y_val))
+
+    dataset_train = dataset_train.batch(batch_size, drop_remainder=True).prefetch(tf.data.experimental.AUTOTUNE)
+    dataset_val = dataset_val.batch(batch_size, drop_remainder=True).prefetch(tf.data.experimental.AUTOTUNE)
+    
+    return (dataset_train, dataset_val)
