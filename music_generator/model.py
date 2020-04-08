@@ -138,6 +138,8 @@ class MusicModel(keras.Sequential):
         """
         if optimizer is None:
             optimizer = keras.optimizers.Adam(learning_rate=self.init_lr, clipvalue=5.0)
+        if metrics is None:
+            metrics = []
         super().compile(optimizer=optimizer,
                         loss=loss,
                         metrics=['sparse_categorical_accuracy'] + metrics,
@@ -171,24 +173,26 @@ class MusicModel(keras.Sequential):
         """
         Train the model for a fixed number of epochs, using keras.Sequential.fit() with default MusicModel callbacks.
         """
-        return super().fit(x=None,
-                           y=None,
-                           batch_size=None,
-                           epochs=1,
-                           verbose=1,
+        if callbacks is None:
+            callbacks = []
+        return super().fit(x=x,
+                           y=y,
+                           batch_size=batch_size,
+                           epochs=epochs,
+                           verbose=verbose,
                            callbacks=self.default_callbacks + callbacks,
-                           validation_split=0.,
-                           validation_data=None,
-                           shuffle=True,
-                           class_weight=None,
-                           sample_weight=None,
-                           initial_epoch=0,
-                           steps_per_epoch=None,
-                           validation_steps=None,
-                           validation_freq=1,
-                           max_queue_size=10,
-                           workers=1,
-                           use_multiprocessing=False,
+                           validation_split=validation_split,
+                           validation_data=validation_data,
+                           shuffle=shuffle,
+                           class_weight=class_weight,
+                           sample_weight=sample_weight,
+                           initial_epoch=initial_epoch,
+                           steps_per_epoch=steps_per_epoch,
+                           validation_steps=validation_steps,
+                           validation_freq=validation_freq,
+                           max_queue_size=max_queue_size,
+                           workers=workers,
+                           use_multiprocessing=use_multiprocessing,
                            **kwargs)
 
     def load_checkpoint(self, path: str,
