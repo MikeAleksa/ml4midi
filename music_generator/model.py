@@ -60,6 +60,8 @@ class MusicModel(keras.Sequential):
         :return: a list of callbacks
         """
         ckpt_callback = keras.callbacks.ModelCheckpoint(filepath=self.ckpt_path,
+                                                        monitor='loss',
+                                                        save_best_only=True,
                                                         save_weights_only=True)
 
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.log_dir,
