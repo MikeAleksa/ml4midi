@@ -217,20 +217,22 @@ class MusicModel(keras.Sequential):
 
     def generate_sequence(self, length: int,
                           seed_sequence: list,
-                          history: int = 100):
+                          history: int = 100,
+                          temperature: float = 1.0):
         """
         Generate an event sequence using a given event sequence as a seed.
         :param length: the number of events to generate
         :param seed_sequence: an event sequence to seed the prediction with - not included in final output
         :param history: the amount of events to consider for each prediction
+        :param temperature: low temperature results in more predictable sequeces, high temperature results in more unexpected results
         :return: an event sequence
         """
-        # TODO: use temperature control
         generated_sequence = list()
         generated_sequence += seed_sequence
         for _ in range(length):
             sequence_history = np.array([generated_sequence[-history:]])
             next_sample_logits = self(sequence_history)
+            next_sample_logits = next_sample_logits / temperature
             next_sample = tf.random.categorical(next_sample_logits, 1)
             generated_sequence.append(int(next_sample))
         return generated_sequence[len(seed_sequence):]
