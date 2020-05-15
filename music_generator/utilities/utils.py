@@ -1,11 +1,16 @@
 """
-A collection of utilities for tuning and using the model.
+A collection of utilities useful while tuning and using the model.
 """
-
+from midi2audio import FluidSynth
 import tensorflow as tf
+
+from pathlib import Path
 
 
 def check_cuda_and_gpu() -> list:
+    """
+    Return warnings if a GPU device or CUDA is unavailable.
+    """
     warnings = []
 
     if not tf.test.is_built_with_cuda():
@@ -18,3 +23,11 @@ def check_cuda_and_gpu() -> list:
         warnings.append('CUDA and GPU Available.')
 
     return warnings
+
+def synthesize_midi_files(str: folder) -> None:
+    """
+    Synthesize all MIDI files in a folder to WAV files using FluidSynth.
+    """
+    fs = FluidSynth()
+    for file in Path(folder).glob('*.mid'):
+        fs.midi_to_audio(str(file), str(file)[:-3] + 'wav')
