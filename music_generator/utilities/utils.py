@@ -24,10 +24,20 @@ def check_cuda_and_gpu() -> list:
 
     return warnings
 
-def synthesize_midi_files(str: folder) -> None:
+def synthesize_midi_files(folder: str) -> None:
     """
     Synthesize all MIDI files in a folder to WAV files using FluidSynth.
     """
     fs = FluidSynth()
     for file in Path(folder).glob('*.mid'):
         fs.midi_to_audio(str(file), str(file)[:-3] + 'wav')
+        
+def create_hashable_set(sequences: list) -> set:
+    """
+    Create a hashable set of strings which represent a group of note sequences.
+    """
+    hashable_set = set()
+    for s in sequences:
+        s = '-'.join([str(x) for x in s])
+        hashable_set.add(s)
+    return hashable_set
