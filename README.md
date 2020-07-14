@@ -12,7 +12,7 @@ Example Jupyter Notebooks are provided which demonstrate simple pipelines to tra
 
 The MusicModel class provides an interface for experimenting with the architecture and hyperparameters of the model. This class inherits from tensorflow.keras.Sequential, and implements an architecture of Embedding -> LSTM -> Dense layers, including batch normalization and dropout for all layers.
 
-The serializers module provides an abstract bass class, MidiSerializer. This project used a MIDI serialization module based on discrete time steps for "wait events", but those looking to experiment can implement a different serialization class as long as it inherits from MidiSerializer.
+The serializers module provides an abstract base class, MidiSerializer. This project used a MIDI serialization module based on discrete time steps for "wait events", but those looking to experiment can implement a different serialization class as long as it inherits from MidiSerializer.
 
 # Requirements
 
